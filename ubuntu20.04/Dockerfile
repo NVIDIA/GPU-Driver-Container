@@ -43,6 +43,8 @@ ARG TARGETARCH
 ENV TARGETARCH=$TARGETARCH
 ARG DRIVER_VERSION
 ENV DRIVER_VERSION=$DRIVER_VERSION
+ARG KERNEL_TYPE=kernel
+ENV KERNEL_TYPE=$KERNEL_TYPE
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Arg to indicate if driver type is either of passthrough(baremetal) or vgpu

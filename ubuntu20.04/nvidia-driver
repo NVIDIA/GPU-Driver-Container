@@ -6,6 +6,7 @@ set -eu
 RUN_DIR=/run/nvidia
 PID_FILE=${RUN_DIR}/${0##*/}.pid
 DRIVER_VERSION=${DRIVER_VERSION:?"Missing DRIVER_VERSION env"}
+KERNEL_TYPE=${KERNEL_TYPE:=kernel} # Only other type is "kernel-open" for OpenRM
 KERNEL_UPDATE_HOOK=/run/kernel/postinst.d/update-nvidia-driver
 NUM_VGPU_DEVICES=0
 GPU_DIRECT_RDMA_ENABLED="${GPU_DIRECT_RDMA_ENABLED:-false}"
@@ -121,7 +122,7 @@ _create_driver_package() (
     trap "make -s -j SYSSRC=/lib/modules/${KERNEL_VERSION}/build clean > /dev/null" EXIT
 
     echo "Compiling NVIDIA driver kernel modules..."
-    cd /usr/src/nvidia-${DRIVER_VERSION}/kernel
+    cd /usr/src/nvidia-${DRIVER_VERSION}/${KERNEL_TYPE}
 
     if _gpu_direct_rdma_enabled; then
         ln -s /run/mellanox/drivers/usr/src/ofa_kernel /usr/src/
@@ -400,7 +401,7 @@ _install_driver() {
     if [ "${ACCEPT_LICENSE}" = "yes" ]; then
         install_args+=("--accept-license")
     fi
-    nvidia-installer --kernel-module-only --no-drm --ui=none --no-nouveau-check ${install_args[@]+"${install_args[@]}"}
+    nvidia-installer --kernel-module-only --no-drm --ui=none --no-nouveau-check -m=${KERNEL_TYPE} ${install_args[@]+"${install_args[@]}"}
 }
 
 # Mount the driver rootfs into the run directory with the exception of sysfs.
@@ -510,7 +511,7 @@ init() {
                     --x-library-path=/tmp/null \
                     --x-sysconfig-path=/tmp/null && \
         mkdir -p /usr/src/nvidia-${DRIVER_VERSION} && \
-        mv LICENSE mkprecompiled kernel /usr/src/nvidia-${DRIVER_VERSION} && \
+        mv LICENSE mkprecompiled ${KERNEL_TYPE} /usr/src/nvidia-${DRIVER_VERSION} && \
         sed '9,${/^\(kernel\|LICENSE\)/!d}' .manifest > /usr/src/nvidia-${DRIVER_VERSION}/.manifest
 
     echo -e "\n========== NVIDIA Software Installer ==========\n"
@@ -585,7 +586,7 @@ update() {
                             --x-library-path=/tmp/null \
                             --x-sysconfig-path=/tmp/null && \
                 mkdir -p /usr/src/nvidia-${DRIVER_VERSION} && \
-                mv LICENSE mkprecompiled kernel /usr/src/nvidia-${DRIVER_VERSION} && \
+                mv LICENSE mkprecompiled ${KERNEL_TYPE} /usr/src/nvidia-${DRIVER_VERSION} && \
                 sed '9,${/^\(kernel\|LICENSE\)/!d}' .manifest > /usr/src/nvidia-${DRIVER_VERSION}/.manifest
         fi
     fi

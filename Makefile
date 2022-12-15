@@ -28,6 +28,7 @@ IMAGE_NAME := $(REGISTRY)/driver
 endif
 
 DRIVER_TAG = $(DRIVER_VERSION)
+KERNEL_TYPE ?= kernel
 
 # VERSION indicates the version to tag the image with.
 # Production tags should be in the form <driver-version>-<dist>
@@ -143,6 +144,7 @@ $(DRIVER_BUILD_TARGETS):
 				--build-arg DRIVER_VERSION="$(DRIVER_VERSION)" \
 				--build-arg DRIVER_BRANCH="$(DRIVER_BRANCH)" \
 				--build-arg CUDA_VERSION="$(CUDA_VERSION)" \
+				--build-arg KERNEL_TYPE="$(KERNEL_TYPE)" \
 				--build-arg CVE_UPDATES="$(CVE_UPDATES)" \
 				$(DOCKER_BUILD_ARGS) \
 				--file $(DOCKERFILE) \
