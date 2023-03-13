@@ -44,9 +44,10 @@ RUN curl -fsSL -o /usr/local/bin/donkey https://github.com/3XX0/donkey/releases/
 RUN apt-get update && apt-get install --download-only --no-install-recommends -y linux-objects-nvidia-${DRIVER_BRANCH}-server-${KERNEL_VERSION} \
 		linux-signatures-nvidia-${KERNEL_VERSION} \
 		linux-modules-nvidia-${DRIVER_BRANCH}-server-${KERNEL_VERSION} \
-		nvidia-utils-${DRIVER_BRANCH}-server \
-		nvidia-compute-utils-${DRIVER_BRANCH}-server \
-		libnvidia-cfg1-${DRIVER_BRANCH}-server
+        nvidia-driver-${DRIVER_BRANCH}-server \
+        nvidia-fabricmanager-${DRIVER_BRANCH} \
+        nvidia-modprobe \
+        libnvidia-nscq-${DRIVER_BRANCH}
 
 COPY nvidia-driver /usr/local/bin
 
