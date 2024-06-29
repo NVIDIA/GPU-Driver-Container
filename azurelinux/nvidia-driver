@@ -95,6 +95,9 @@ _install_driver() {
 
     echo "Installing the NVIDIA fabricmanager"
     tdnf install -y ${PACKAGE_DIR}/nvidia-fabric-manager-${DRIVER_VERSION}*.rpm
+
+    echo "Installing the NVIDIA NSCQ"
+    tdnf install -y ${PACKAGE_DIR}/libnvidia-nscq-${DRIVER_VERSION}*.rpm
 }
 
 # Load the kernel modules and start persistenced.
